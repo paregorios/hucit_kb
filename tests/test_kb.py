@@ -48,7 +48,7 @@ def test_kb_author_abbreviations(kb_virtuoso):
     n_abbreviations = len(abbreviations)
     assert abbreviations is not None and n_abbreviations > 0
     logger.info("%i abbreviations of author names in the KB" % n_abbreviations)
-    for i, author_key in enumerate(abbreviations.keys()[:10]):
+    for i, author_key in enumerate(list(abbreviations.keys())[:10]):
         logger.info("%i. %s => %s" % (
             i,
             author_key.split("$$")[0],
@@ -75,4 +75,4 @@ def test_kb_work_abbreviations(kb_virtuoso):
 def test_kb_get_statistics(kb_virtuoso):
     stats = kb_virtuoso.get_statistics()
     logger.info(stats)
-    assert stats is not None and 0 not in stats.values()
+    assert stats is not None and 0 not in list(stats.values())

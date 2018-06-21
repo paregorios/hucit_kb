@@ -53,15 +53,15 @@ class HucitAuthor(object):
         try:
             english_name = [name[1] for name in names if name[0]=='en']
             return english_name[0]
-        except Exception as e:
+        except Exception, e:
             try:
                 default_name = [name[1] for name in names if name[0]==None]
                 return default_name[0]
-            except Exception as e:
+            except Exception, e:
                 try:
                     latin_name = [name[1] for name in names if name[0]=='la']
                     return latin_name[0]
-                except Exception as e:
+                except Exception, e:
                     return None
 
     def get_names(self):
@@ -110,7 +110,7 @@ class HucitAuthor(object):
         name = [id for id in self.ecrm_P1_is_identified_by if id.uri == surf.ns.EFRBROO['F12_Name']][0]
 
         for label in name.rdfs_label:
-            if str(label) == name_to_remove:
+            if unicode(label) == name_to_remove:
                 name.rdfs_label.pop(name.rdfs_label.index(label))
                 name.update()
                 return True
@@ -154,7 +154,7 @@ class HucitAuthor(object):
             abbreviation.rdfs_label.append(Literal(new_abbreviation))
             abbreviation.save()
 
-            name = next((name for name in self.ecrm_P1_is_identified_by if name.uri == surf.ns.EFRBROO['F12_Name']))
+            name = (name for name in self.ecrm_P1_is_identified_by if name.uri == surf.ns.EFRBROO['F12_Name']).next()
             name.ecrm_P139_has_alternative_form = abbreviation
             name.update()
             return True
@@ -171,7 +171,7 @@ class HucitAuthor(object):
         try:
             type_abbreviation = self.session.get_resource(BASE_URI_TYPES % "abbreviation"
                                                         , self.session.get_class(surf.ns.ECRM['E55_Type']))
-            abbreviations = [str(label)
+            abbreviations = [unicode(label)
                                 for name in self.ecrm_P1_is_identified_by
                                     for abbreviation in name.ecrm_P139_has_alternative_form
                                         for label in abbreviation.rdfs_label
@@ -211,7 +211,7 @@ class HucitAuthor(object):
             id.ecrm_P2_has_type = Type(BASE_URI_TYPES % "CTS_URN")
             id.save()
             return True
-        except Exception as e:
+        except Exception, e:
             raise e
 
     def get_works(self):
@@ -274,7 +274,7 @@ class HucitAuthor(object):
                 },
                 {
                   "language": "fr",
-                  "label": "L'Odyss\\u00e9e"
+                  "label": "L'Odyss\u00e9e"
                 },
                 {
                   "language": "it",
@@ -312,7 +312,7 @@ class HucitAuthor(object):
           "names": [
             {
               "language": "fr",
-              "label": "Hom\\u00e8re"
+              "label": "Hom\u00e8re"
             },
             {
               "language": "la",
@@ -359,20 +359,20 @@ class HucitWork(object):
         try:
             english_title = [title[1] for title in titles if title[0]=='en']
             return english_title[0]
-        except Exception as e:
+        except Exception, e:
             try:
                 default_title = [title[1] for title in titles if title[0]==None]
                 return default_title[0]
-            except Exception as e:
+            except Exception, e:
                 try:
                     latin_title = [title[1] for title in titles if title[0]=='la']
                     return latin_title[0]
-                except Exception as e:
+                except Exception, e:
                     return None
 
     def get_titles(self):
         """TODO"""
-        return [(label.language, str(label)) for label in self.efrbroo_P102_has_title.first.rdfs_label]
+        return [(label.language, unicode(label)) for label in self.efrbroo_P102_has_title.first.rdfs_label]
 
     def get_abbreviations(self, combine=False):
         """
@@ -386,7 +386,7 @@ class HucitWork(object):
         try:
             type_abbreviation = self.session.get_resource(BASE_URI_TYPES % "abbreviation"
                                                         , self.session.get_class(surf.ns.ECRM['E55_Type']))
-            abbreviations = [str(label)
+            abbreviations = [unicode(label)
                                 for title in self.efrbroo_P102_has_title
                                     for abbreviation in title.ecrm_P139_has_alternative_form
                                         for label in abbreviation.rdfs_label
@@ -457,7 +457,7 @@ class HucitWork(object):
                                     if urnstring.uri == surf.ns.ECRM['E42_Identifier'] and
                                         urnstring.ecrm_P2_has_type.first == type_ctsurn][0]
             return urn
-        except Exception as e:
+        except Exception, e:
             return None
 
     def set_urn(self, urn):
@@ -473,7 +473,7 @@ class HucitWork(object):
             id.ecrm_P2_has_type = Type(BASE_URI_TYPES % "CTS_URN")
             id.save()
             return True
-        except Exception as e:
+        except Exception, e:
             raise e
 
     def has_text_structure(self):
@@ -601,7 +601,7 @@ class HucitTextElement(object):
     def __repr__(self):
         return ""
 
-    def __next__(self):
+    def next(self):
         """ TODO """
         return self.hucit_precedes.one
 
@@ -641,7 +641,7 @@ class HucitTextElement(object):
         urn = self.ecrm_P1_is_identified_by.one
         try:
             return CTS_URN(urn)
-        except Exception as e:
+        except Exception, e:
             raise e
 
 class HucitTextStructure(object):
